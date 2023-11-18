@@ -1,0 +1,509 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 2000px;
+                 height: 1000px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 2000px;
+                 height: 1000px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="IBEX 35®">IBEX 35®</option>
+                                
+                                    <option value="ACCIONA,S.A.">ACCIONA,S.A.</option>
+                                
+                                    <option value="ACERINOX, S.A.">ACERINOX, S.A.</option>
+                                
+                                    <option value="ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A">ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A</option>
+                                
+                                    <option value="ADOLFO DOMINGUEZ, S.A.">ADOLFO DOMINGUEZ, S.A.</option>
+                                
+                                    <option value="AEDAS HOMES, S.A.">AEDAS HOMES, S.A.</option>
+                                
+                                    <option value="AENA, S.M.E., S.A.">AENA, S.M.E., S.A.</option>
+                                
+                                    <option value="AIRBUS SE">AIRBUS SE</option>
+                                
+                                    <option value="AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.">AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.</option>
+                                
+                                    <option value="ALANTRA PARTNERS, S.A.">ALANTRA PARTNERS, S.A.</option>
+                                
+                                    <option value="ALMIRALL, S.A.">ALMIRALL, S.A.</option>
+                                
+                                    <option value="AMADEUS IT GROUP, S.A.">AMADEUS IT GROUP, S.A.</option>
+                                
+                                    <option value="AMPER, S.A.">AMPER, S.A.</option>
+                                
+                                    <option value="AMREST HOLDINGS, S.E.">AMREST HOLDINGS, S.E.</option>
+                                
+                                    <option value="APERAM, SOCIETE ANONYME">APERAM, SOCIETE ANONYME</option>
+                                
+                                    <option value="APPLUS SERVICES, S.A.">APPLUS SERVICES, S.A.</option>
+                                
+                                    <option value="ARCELORMITTAL, S.A.">ARCELORMITTAL, S.A.</option>
+                                
+                                    <option value="ÁRIMA REAL ESTATE SOCIMI, S.A.">ÁRIMA REAL ESTATE SOCIMI, S.A.</option>
+                                
+                                    <option value="ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.">ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.</option>
+                                
+                                    <option value="ATRYS HEALTH, S.A.">ATRYS HEALTH, S.A.</option>
+                                
+                                    <option value="AUDAX RENOVABLES, S.A.">AUDAX RENOVABLES, S.A.</option>
+                                
+                                    <option value="AZKOYEN S.A.">AZKOYEN S.A.</option>
+                                
+                                    <option value="BANCO BILBAO VIZCAYA ARGENTARIA, S.A.">BANCO BILBAO VIZCAYA ARGENTARIA, S.A.</option>
+                                
+                                    <option value="BANCO DE SABADELL, S.A.">BANCO DE SABADELL, S.A.</option>
+                                
+                                    <option value="BANCO SANTANDER, S.A.">BANCO SANTANDER, S.A.</option>
+                                
+                                    <option value="BANKINTER,S.A.">BANKINTER,S.A.</option>
+                                
+                                    <option value="BERKELEY ENERGIA LIMITED">BERKELEY ENERGIA LIMITED</option>
+                                
+                                    <option value="BODEGAS RIOJANAS, S.A.">BODEGAS RIOJANAS, S.A.</option>
+                                
+                                    <option value="BORGES AGRICULTURAL & INDUST. NUTS, S.A.">BORGES AGRICULTURAL & INDUST. NUTS, S.A.</option>
+                                
+                                    <option value="CAIXABANK, S.A.">CAIXABANK, S.A.</option>
+                                
+                                    <option value="CAJA DE AHORROS DEL MEDITERRANEO">CAJA DE AHORROS DEL MEDITERRANEO</option>
+                                
+                                    <option value="CASH, S.A.">CASH, S.A.</option>
+                                
+                                    <option value="CELLNEX TELECOM, S.A.">CELLNEX TELECOM, S.A.</option>
+                                
+                                    <option value="CIA. DE DIST. INTEG. LOGISTA HOLDINGS">CIA. DE DIST. INTEG. LOGISTA HOLDINGS</option>
+                                
+                                    <option value="CIA. ESPAÑOLA  VIVIENDAS EN ALQUILER,S.A">CIA. ESPAÑOLA  VIVIENDAS EN ALQUILER,S.A</option>
+                                
+                                    <option value="CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS">CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS</option>
+                                
+                                    <option value="CIE AUTOMOTIVE, S.A.">CIE AUTOMOTIVE, S.A.</option>
+                                
+                                    <option value="CLINICA BAVIERA, S.A.">CLINICA BAVIERA, S.A.</option>
+                                
+                                    <option value="COCA-COLA EUROPACIFIC PARTNERS PLC">COCA-COLA EUROPACIFIC PARTNERS PLC</option>
+                                
+                                    <option value="CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.">CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.</option>
+                                
+                                    <option value="CORP.  ACCIONA ENERGÍAS RENOVABLES, S.A.">CORP.  ACCIONA ENERGÍAS RENOVABLES, S.A.</option>
+                                
+                                    <option value="CORPORACION FINANCIERA ALBA, S.A.">CORPORACION FINANCIERA ALBA, S.A.</option>
+                                
+                                    <option value="DEOLEO, S.A.">DEOLEO, S.A.</option>
+                                
+                                    <option value="DESA">DESA</option>
+                                
+                                    <option value="DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.">DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.</option>
+                                
+                                    <option value="DURO FELGUERA, S.A.">DURO FELGUERA, S.A.</option>
+                                
+                                    <option value="EBRO FOODS, S.A.">EBRO FOODS, S.A.</option>
+                                
+                                    <option value="ECOENER, S.A.">ECOENER, S.A.</option>
+                                
+                                    <option value="EDREAMS ODIGEO, S.A.">EDREAMS ODIGEO, S.A.</option>
+                                
+                                    <option value="ELECNOR S. A.">ELECNOR S. A.</option>
+                                
+                                    <option value="ENAGAS, S.A.">ENAGAS, S.A.</option>
+                                
+                                    <option value="ENCE ENERGIA Y CELULOSA, S.A.">ENCE ENERGIA Y CELULOSA, S.A.</option>
+                                
+                                    <option value="ENDESA, SOCIEDAD ANONIMA">ENDESA, SOCIEDAD ANONIMA</option>
+                                
+                                    <option value="ERCROS S.A.">ERCROS S.A.</option>
+                                
+                                    <option value="FAES FARMA, S.A.">FAES FARMA, S.A.</option>
+                                
+                                    <option value="FERROVIAL S.E.">FERROVIAL S.E.</option>
+                                
+                                    <option value="FLUIDRA, S.A.">FLUIDRA, S.A.</option>
+                                
+                                    <option value="FOMENTO DE CONSTR. Y CONTRATAS S.A.">FOMENTO DE CONSTR. Y CONTRATAS S.A.</option>
+                                
+                                    <option value="GENERAL DE ALQUILER DE MAQUINARIA, S.A.">GENERAL DE ALQUILER DE MAQUINARIA, S.A.</option>
+                                
+                                    <option value="GESTAMP AUTOMOCION, S.A.">GESTAMP AUTOMOCION, S.A.</option>
+                                
+                                    <option value="GLOBAL DOMINION ACCESS, S.A.">GLOBAL DOMINION ACCESS, S.A.</option>
+                                
+                                    <option value="GRENERGY RENOVABLES, S.A.">GRENERGY RENOVABLES, S.A.</option>
+                                
+                                    <option value="GRIFOLS, S.A.">GRIFOLS, S.A.</option>
+                                
+                                    <option value="GRUPO CATALANA OCCIDENTE, S.A.">GRUPO CATALANA OCCIDENTE, S.A.</option>
+                                
+                                    <option value="GRUPO EMPRESARIAL SAN JOSE, S.A.">GRUPO EMPRESARIAL SAN JOSE, S.A.</option>
+                                
+                                    <option value="GRUPO EZENTIS, S.A.">GRUPO EZENTIS, S.A.</option>
+                                
+                                    <option value="IBERDROLA, S.A.">IBERDROLA, S.A.</option>
+                                
+                                    <option value="IBERPAPEL GESTION, S.A.">IBERPAPEL GESTION, S.A.</option>
+                                
+                                    <option value="INDRA SISTEMAS, S.A., SERIE A">INDRA SISTEMAS, S.A., SERIE A</option>
+                                
+                                    <option value="INDUSTRIA DE DISEÑO TEXTIL, SA "INDITEX"">INDUSTRIA DE DISEÑO TEXTIL, SA "INDITEX"</option>
+                                
+                                    <option value="INMOBILIARIA COLONIAL SOCIMI, S.A.">INMOBILIARIA COLONIAL SOCIMI, S.A.</option>
+                                
+                                    <option value="INMOBILIARIA DEL SUR, S.A.">INMOBILIARIA DEL SUR, S.A.</option>
+                                
+                                    <option value="INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.">INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.</option>
+                                
+                                    <option value="INTERNATIONAL CONSOLIDAT. AIRLINES GROUP">INTERNATIONAL CONSOLIDAT. AIRLINES GROUP</option>
+                                
+                                    <option value="LABORATORIO REIG JOFRE, S.A.">LABORATORIO REIG JOFRE, S.A.</option>
+                                
+                                    <option value="LABORATORIOS FARMACEUTICOS ROVI, S.A.">LABORATORIOS FARMACEUTICOS ROVI, S.A.</option>
+                                
+                                    <option value="LAR ESPAÑA REAL ESTATE, SOCIMI, S.A.">LAR ESPAÑA REAL ESTATE, SOCIMI, S.A.</option>
+                                
+                                    <option value="LIBERTAS 7, S.A.">LIBERTAS 7, S.A.</option>
+                                
+                                    <option value="LINEA DIRECTA ASEGURADORA, S.A.">LINEA DIRECTA ASEGURADORA, S.A.</option>
+                                
+                                    <option value="LINGOTES ESPECIALES, S.A.">LINGOTES ESPECIALES, S.A.</option>
+                                
+                                    <option value="MAPFRE, S.A.">MAPFRE, S.A.</option>
+                                
+                                    <option value="MELIA HOTELS INTERNATIONAL, S.A.">MELIA HOTELS INTERNATIONAL, S.A.</option>
+                                
+                                    <option value="MERLIN PROPERTIES, SOCIMI, S.A.">MERLIN PROPERTIES, SOCIMI, S.A.</option>
+                                
+                                    <option value="METROVACESA, S.A.">METROVACESA, S.A.</option>
+                                
+                                    <option value="MFE-MEDIAFOREUROPE N.V.">MFE-MEDIAFOREUROPE N.V.</option>
+                                
+                                    <option value="MIQUEL Y COSTAS & MIQUEL, S.A.">MIQUEL Y COSTAS & MIQUEL, S.A.</option>
+                                
+                                    <option value="MONTEBALITO, S.A.">MONTEBALITO, S.A.</option>
+                                
+                                    <option value="NATURGY ENERGY GROUP, S.A.">NATURGY ENERGY GROUP, S.A.</option>
+                                
+                                    <option value="NATURHOUSE HEALTH, S.A.">NATURHOUSE HEALTH, S.A.</option>
+                                
+                                    <option value="NEINOR HOMES, S.A.">NEINOR HOMES, S.A.</option>
+                                
+                                    <option value="NH HOTEL GROUP, S.A.">NH HOTEL GROUP, S.A.</option>
+                                
+                                    <option value="NICOLAS CORREA S.A.">NICOLAS CORREA S.A.</option>
+                                
+                                    <option value="NUEVA EXPRESION TEXTIL, S.A.">NUEVA EXPRESION TEXTIL, S.A.</option>
+                                
+                                    <option value="NYESA VALORES CORPORACION, S.A.">NYESA VALORES CORPORACION, S.A.</option>
+                                
+                                    <option value="OBRASCON HUARTE LAIN, S.A.">OBRASCON HUARTE LAIN, S.A.</option>
+                                
+                                    <option value="OPDENERGY HOLDING, S.A.">OPDENERGY HOLDING, S.A.</option>
+                                
+                                    <option value="ORYZON GENOMICS, S.A.">ORYZON GENOMICS, S.A.</option>
+                                
+                                    <option value="PESCANOVA, S.A.">PESCANOVA, S.A.</option>
+                                
+                                    <option value="PHARMA MAR, S.A.">PHARMA MAR, S.A.</option>
+                                
+                                    <option value="PRIM, S.A.">PRIM, S.A.</option>
+                                
+                                    <option value="PROMOTORA DE INFORMACIONES,S.A.">PROMOTORA DE INFORMACIONES,S.A.</option>
+                                
+                                    <option value="IGBM">IGBM</option>
+                                
+                                    <option value="IBEX TOP Dividendo®">IBEX TOP Dividendo®</option>
+                                
+                                    <option value="Basic Mat., Industry and Construction">Basic Mat., Industry and Construction</option>
+                                
+                                    <option value="Consumer Goods">Consumer Goods</option>
+                                
+                                    <option value="Real Estate Services">Real Estate Services</option>
+                                
+                                    <option value="Consumer Services">Consumer Services</option>
+                                
+                                    <option value="Financial Services">Financial Services</option>
+                                
+                                    <option value="Technology and Telecommunications">Technology and Telecommunications</option>
+                                
+                                    <option value="Petrol and Power">Petrol and Power</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#97c2fc", "font": {"color": "white"}, "id": "IBEX 35\u00ae", "label": "IBEX 35\u00ae", "shape": "dot", "size": 100}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ACCIONA,S.A.", "label": "ACCIONA,S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ACERINOX, S.A.", "label": "ACERINOX, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "label": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ADOLFO DOMINGUEZ, S.A.", "label": "ADOLFO DOMINGUEZ, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AEDAS HOMES, S.A.", "label": "AEDAS HOMES, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AENA, S.M.E., S.A.", "label": "AENA, S.M.E., S.A.", "sector": "Consumer Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AIRBUS SE", "label": "AIRBUS SE", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.", "label": "AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ALANTRA PARTNERS, S.A.", "label": "ALANTRA PARTNERS, S.A.", "sector": "Financial Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ALMIRALL, S.A.", "label": "ALMIRALL, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AMADEUS IT GROUP, S.A.", "label": "AMADEUS IT GROUP, S.A.", "sector": "Technology and Telecommunications", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AMPER, S.A.", "label": "AMPER, S.A.", "sector": "Technology and Telecommunications", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AMREST HOLDINGS, S.E.", "label": "AMREST HOLDINGS, S.E.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "APERAM, SOCIETE ANONYME", "label": "APERAM, SOCIETE ANONYME", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "APPLUS SERVICES, S.A.", "label": "APPLUS SERVICES, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ARCELORMITTAL, S.A.", "label": "ARCELORMITTAL, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "\u00c1RIMA REAL ESTATE SOCIMI, S.A.", "label": "\u00c1RIMA REAL ESTATE SOCIMI, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.", "label": "ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.", "sector": "Consumer Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ATRYS HEALTH, S.A.", "label": "ATRYS HEALTH, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AUDAX RENOVABLES, S.A.", "label": "AUDAX RENOVABLES, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "AZKOYEN S.A.", "label": "AZKOYEN S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "label": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "sector": "Financial Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BANCO DE SABADELL, S.A.", "label": "BANCO DE SABADELL, S.A.", "sector": "Financial Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BANCO SANTANDER, S.A.", "label": "BANCO SANTANDER, S.A.", "sector": "Financial Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BANKINTER,S.A.", "label": "BANKINTER,S.A.", "sector": "Financial Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BERKELEY ENERGIA LIMITED", "label": "BERKELEY ENERGIA LIMITED", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BODEGAS RIOJANAS, S.A.", "label": "BODEGAS RIOJANAS, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "BORGES AGRICULTURAL \u0026 INDUST. NUTS, S.A.", "label": "BORGES AGRICULTURAL \u0026 INDUST. NUTS, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CAIXABANK, S.A.", "label": "CAIXABANK, S.A.", "sector": "Financial Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CAJA DE AHORROS DEL MEDITERRANEO", "label": "CAJA DE AHORROS DEL MEDITERRANEO", "sector": "Financial Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CASH, S.A.", "label": "CASH, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CELLNEX TELECOM, S.A.", "label": "CELLNEX TELECOM, S.A.", "sector": "Technology and Telecommunications", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "label": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "sector": "Consumer Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CIA. ESPA\u00d1OLA  VIVIENDAS EN ALQUILER,S.A", "label": "CIA. ESPA\u00d1OLA  VIVIENDAS EN ALQUILER,S.A", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS", "label": "CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CIE AUTOMOTIVE, S.A.", "label": "CIE AUTOMOTIVE, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CLINICA BAVIERA, S.A.", "label": "CLINICA BAVIERA, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "COCA-COLA EUROPACIFIC PARTNERS PLC", "label": "COCA-COLA EUROPACIFIC PARTNERS PLC", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.", "label": "CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CORP.  ACCIONA ENERG\u00cdAS RENOVABLES, S.A.", "label": "CORP.  ACCIONA ENERG\u00cdAS RENOVABLES, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "CORPORACION FINANCIERA ALBA, S.A.", "label": "CORPORACION FINANCIERA ALBA, S.A.", "sector": "Financial Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DEOLEO, S.A.", "label": "DEOLEO, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DESA", "label": "DESA", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.", "label": "DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "DURO FELGUERA, S.A.", "label": "DURO FELGUERA, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "EBRO FOODS, S.A.", "label": "EBRO FOODS, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ECOENER, S.A.", "label": "ECOENER, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "EDREAMS ODIGEO, S.A.", "label": "EDREAMS ODIGEO, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ELECNOR S. A.", "label": "ELECNOR S. A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ENAGAS, S.A.", "label": "ENAGAS, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ENCE ENERGIA Y CELULOSA, S.A.", "label": "ENCE ENERGIA Y CELULOSA, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ENDESA, SOCIEDAD ANONIMA", "label": "ENDESA, SOCIEDAD ANONIMA", "sector": "Petrol and Power", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ERCROS S.A.", "label": "ERCROS S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "FAES FARMA, S.A.", "label": "FAES FARMA, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "FERROVIAL S.E.", "label": "FERROVIAL S.E.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "FLUIDRA, S.A.", "label": "FLUIDRA, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "FOMENTO DE CONSTR. Y CONTRATAS S.A.", "label": "FOMENTO DE CONSTR. Y CONTRATAS S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GENERAL DE ALQUILER DE MAQUINARIA, S.A.", "label": "GENERAL DE ALQUILER DE MAQUINARIA, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GESTAMP AUTOMOCION, S.A.", "label": "GESTAMP AUTOMOCION, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GLOBAL DOMINION ACCESS, S.A.", "label": "GLOBAL DOMINION ACCESS, S.A.", "sector": "Technology and Telecommunications", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GRENERGY RENOVABLES, S.A.", "label": "GRENERGY RENOVABLES, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GRIFOLS, S.A.", "label": "GRIFOLS, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GRUPO CATALANA OCCIDENTE, S.A.", "label": "GRUPO CATALANA OCCIDENTE, S.A.", "sector": "Financial Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GRUPO EMPRESARIAL SAN JOSE, S.A.", "label": "GRUPO EMPRESARIAL SAN JOSE, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "GRUPO EZENTIS, S.A.", "label": "GRUPO EZENTIS, S.A.", "sector": "Technology and Telecommunications", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "IBERDROLA, S.A.", "label": "IBERDROLA, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "IBERPAPEL GESTION, S.A.", "label": "IBERPAPEL GESTION, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INDRA SISTEMAS, S.A., SERIE A", "label": "INDRA SISTEMAS, S.A., SERIE A", "sector": "Technology and Telecommunications", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INDUSTRIA DE DISE\u00d1O TEXTIL, SA \"INDITEX\"", "label": "INDUSTRIA DE DISE\u00d1O TEXTIL, SA \"INDITEX\"", "sector": "Consumer Goods", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "label": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INMOBILIARIA DEL SUR, S.A.", "label": "INMOBILIARIA DEL SUR, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.", "label": "INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "INTERNATIONAL CONSOLIDAT. AIRLINES GROUP", "label": "INTERNATIONAL CONSOLIDAT. AIRLINES GROUP", "sector": "Consumer Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LABORATORIO REIG JOFRE, S.A.", "label": "LABORATORIO REIG JOFRE, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LABORATORIOS FARMACEUTICOS ROVI, S.A.", "label": "LABORATORIOS FARMACEUTICOS ROVI, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LAR ESPA\u00d1A REAL ESTATE, SOCIMI, S.A.", "label": "LAR ESPA\u00d1A REAL ESTATE, SOCIMI, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LIBERTAS 7, S.A.", "label": "LIBERTAS 7, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LINEA DIRECTA ASEGURADORA, S.A.", "label": "LINEA DIRECTA ASEGURADORA, S.A.", "sector": "Financial Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "LINGOTES ESPECIALES, S.A.", "label": "LINGOTES ESPECIALES, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MAPFRE, S.A.", "label": "MAPFRE, S.A.", "sector": "Financial Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MELIA HOTELS INTERNATIONAL, S.A.", "label": "MELIA HOTELS INTERNATIONAL, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MERLIN PROPERTIES, SOCIMI, S.A.", "label": "MERLIN PROPERTIES, SOCIMI, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "METROVACESA, S.A.", "label": "METROVACESA, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MFE-MEDIAFOREUROPE N.V.", "label": "MFE-MEDIAFOREUROPE N.V.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MIQUEL Y COSTAS \u0026 MIQUEL, S.A.", "label": "MIQUEL Y COSTAS \u0026 MIQUEL, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "MONTEBALITO, S.A.", "label": "MONTEBALITO, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NATURGY ENERGY GROUP, S.A.", "label": "NATURGY ENERGY GROUP, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 4}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NATURHOUSE HEALTH, S.A.", "label": "NATURHOUSE HEALTH, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NEINOR HOMES, S.A.", "label": "NEINOR HOMES, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NH HOTEL GROUP, S.A.", "label": "NH HOTEL GROUP, S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NICOLAS CORREA S.A.", "label": "NICOLAS CORREA S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 3}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NUEVA EXPRESION TEXTIL, S.A.", "label": "NUEVA EXPRESION TEXTIL, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "NYESA VALORES CORPORACION, S.A.", "label": "NYESA VALORES CORPORACION, S.A.", "sector": "Real Estate Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "OBRASCON HUARTE LAIN, S.A.", "label": "OBRASCON HUARTE LAIN, S.A.", "sector": "Basic Mat., Industry and Construction", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "OPDENERGY HOLDING, S.A.", "label": "OPDENERGY HOLDING, S.A.", "sector": "Petrol and Power", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "ORYZON GENOMICS, S.A.", "label": "ORYZON GENOMICS, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "PESCANOVA, S.A.", "label": "PESCANOVA, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "PHARMA MAR, S.A.", "label": "PHARMA MAR, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "PRIM, S.A.", "label": "PRIM, S.A.", "sector": "Consumer Goods", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "PROMOTORA DE INFORMACIONES,S.A.", "label": "PROMOTORA DE INFORMACIONES,S.A.", "sector": "Consumer Services", "shape": "dot", "size": 2}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "IGBM", "label": "IGBM", "shape": "dot", "size": 35}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "IBEX TOP Dividendo\u00ae", "label": "IBEX TOP Dividendo\u00ae", "shape": "dot", "size": 14}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Basic Mat., Industry and Construction", "label": "Basic Mat., Industry and Construction", "shape": "dot", "size": 26}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Consumer Goods", "label": "Consumer Goods", "shape": "dot", "size": 22}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Real Estate Services", "label": "Real Estate Services", "shape": "dot", "size": 12}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Consumer Services", "label": "Consumer Services", "shape": "dot", "size": 14}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Financial Services", "label": "Financial Services", "shape": "dot", "size": 11}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Technology and Telecommunications", "label": "Technology and Telecommunications", "shape": "dot", "size": 6}, {"color": "#97c2fc", "font": {"color": "white"}, "id": "Petrol and Power", "label": "Petrol and Power", "shape": "dot", "size": 9}]);
+                  edges = new vis.DataSet([{"from": "IBEX 35\u00ae", "to": "ACCIONA,S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ACERINOX, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ADOLFO DOMINGUEZ, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AEDAS HOMES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AENA, S.M.E., S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AIRBUS SE", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ALANTRA PARTNERS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ALMIRALL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AMADEUS IT GROUP, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AMPER, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AMREST HOLDINGS, S.E.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "APERAM, SOCIETE ANONYME", "width": 1}, {"from": "IBEX 35\u00ae", "to": "APPLUS SERVICES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ARCELORMITTAL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "\u00c1RIMA REAL ESTATE SOCIMI, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ATRYS HEALTH, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AUDAX RENOVABLES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "AZKOYEN S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BANCO DE SABADELL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BANCO SANTANDER, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BANKINTER,S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BERKELEY ENERGIA LIMITED", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BODEGAS RIOJANAS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "BORGES AGRICULTURAL \u0026 INDUST. NUTS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CAIXABANK, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CAJA DE AHORROS DEL MEDITERRANEO", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CASH, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CELLNEX TELECOM, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CIA. ESPA\u00d1OLA  VIVIENDAS EN ALQUILER,S.A", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CIE AUTOMOTIVE, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CLINICA BAVIERA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "COCA-COLA EUROPACIFIC PARTNERS PLC", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CORP.  ACCIONA ENERG\u00cdAS RENOVABLES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "CORPORACION FINANCIERA ALBA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "DEOLEO, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "DESA", "width": 1}, {"from": "IBEX 35\u00ae", "to": "DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "DURO FELGUERA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "EBRO FOODS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ECOENER, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "EDREAMS ODIGEO, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ELECNOR S. A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ENAGAS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ENCE ENERGIA Y CELULOSA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ENDESA, SOCIEDAD ANONIMA", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ERCROS S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "FAES FARMA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "FERROVIAL S.E.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "FLUIDRA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "FOMENTO DE CONSTR. Y CONTRATAS S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GENERAL DE ALQUILER DE MAQUINARIA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GESTAMP AUTOMOCION, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GLOBAL DOMINION ACCESS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GRENERGY RENOVABLES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GRIFOLS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GRUPO CATALANA OCCIDENTE, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GRUPO EMPRESARIAL SAN JOSE, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "GRUPO EZENTIS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "IBERDROLA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "IBERPAPEL GESTION, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INDRA SISTEMAS, S.A., SERIE A", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INDUSTRIA DE DISE\u00d1O TEXTIL, SA \"INDITEX\"", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INMOBILIARIA DEL SUR, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "INTERNATIONAL CONSOLIDAT. AIRLINES GROUP", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LABORATORIO REIG JOFRE, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LABORATORIOS FARMACEUTICOS ROVI, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LAR ESPA\u00d1A REAL ESTATE, SOCIMI, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LIBERTAS 7, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LINEA DIRECTA ASEGURADORA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "LINGOTES ESPECIALES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MAPFRE, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MELIA HOTELS INTERNATIONAL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MERLIN PROPERTIES, SOCIMI, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "METROVACESA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MFE-MEDIAFOREUROPE N.V.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MIQUEL Y COSTAS \u0026 MIQUEL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "MONTEBALITO, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NATURGY ENERGY GROUP, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NATURHOUSE HEALTH, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NEINOR HOMES, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NH HOTEL GROUP, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NICOLAS CORREA S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NUEVA EXPRESION TEXTIL, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "NYESA VALORES CORPORACION, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "OBRASCON HUARTE LAIN, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "OPDENERGY HOLDING, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "ORYZON GENOMICS, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "PESCANOVA, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "PHARMA MAR, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "PRIM, S.A.", "width": 1}, {"from": "IBEX 35\u00ae", "to": "PROMOTORA DE INFORMACIONES,S.A.", "width": 1}, {"from": "IGBM", "to": "ACCIONA,S.A.", "width": 1}, {"from": "IGBM", "to": "ACERINOX, S.A.", "width": 1}, {"from": "IGBM", "to": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "width": 1}, {"from": "IGBM", "to": "AEDAS HOMES, S.A.", "width": 1}, {"from": "IGBM", "to": "AENA, S.M.E., S.A.", "width": 1}, {"from": "IGBM", "to": "AMADEUS IT GROUP, S.A.", "width": 1}, {"from": "IGBM", "to": "ARCELORMITTAL, S.A.", "width": 1}, {"from": "IGBM", "to": "ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.", "width": 1}, {"from": "IGBM", "to": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "width": 1}, {"from": "IGBM", "to": "BANCO DE SABADELL, S.A.", "width": 1}, {"from": "IGBM", "to": "BANCO SANTANDER, S.A.", "width": 1}, {"from": "IGBM", "to": "BANKINTER,S.A.", "width": 1}, {"from": "IGBM", "to": "CAIXABANK, S.A.", "width": 1}, {"from": "IGBM", "to": "CELLNEX TELECOM, S.A.", "width": 1}, {"from": "IGBM", "to": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "width": 1}, {"from": "IGBM", "to": "CORP.  ACCIONA ENERG\u00cdAS RENOVABLES, S.A.", "width": 1}, {"from": "IGBM", "to": "ENAGAS, S.A.", "width": 1}, {"from": "IGBM", "to": "ENDESA, SOCIEDAD ANONIMA", "width": 1}, {"from": "IGBM", "to": "FERROVIAL S.E.", "width": 1}, {"from": "IGBM", "to": "FLUIDRA, S.A.", "width": 1}, {"from": "IGBM", "to": "GRIFOLS, S.A.", "width": 1}, {"from": "IGBM", "to": "IBERDROLA, S.A.", "width": 1}, {"from": "IGBM", "to": "INDRA SISTEMAS, S.A., SERIE A", "width": 1}, {"from": "IGBM", "to": "INDUSTRIA DE DISE\u00d1O TEXTIL, SA \"INDITEX\"", "width": 1}, {"from": "IGBM", "to": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "width": 1}, {"from": "IGBM", "to": "INTERNATIONAL CONSOLIDAT. AIRLINES GROUP", "width": 1}, {"from": "IGBM", "to": "LABORATORIOS FARMACEUTICOS ROVI, S.A.", "width": 1}, {"from": "IGBM", "to": "LAR ESPA\u00d1A REAL ESTATE, SOCIMI, S.A.", "width": 1}, {"from": "IGBM", "to": "LINEA DIRECTA ASEGURADORA, S.A.", "width": 1}, {"from": "IGBM", "to": "MAPFRE, S.A.", "width": 1}, {"from": "IGBM", "to": "MELIA HOTELS INTERNATIONAL, S.A.", "width": 1}, {"from": "IGBM", "to": "MERLIN PROPERTIES, SOCIMI, S.A.", "width": 1}, {"from": "IGBM", "to": "NATURGY ENERGY GROUP, S.A.", "width": 1}, {"from": "IGBM", "to": "NEINOR HOMES, S.A.", "width": 1}, {"from": "IGBM", "to": "NICOLAS CORREA S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "ACERINOX, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "BANKINTER,S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "CAIXABANK, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "ENAGAS, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "ENDESA, SOCIEDAD ANONIMA", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "FLUIDRA, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "IBERDROLA, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "MAPFRE, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "MERLIN PROPERTIES, SOCIMI, S.A.", "width": 1}, {"from": "IBEX TOP Dividendo\u00ae", "to": "NATURGY ENERGY GROUP, S.A.", "width": 1}, {"from": "ACCIONA,S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ACERINOX, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ACS,ACTIVIDADES DE CONST.Y SERVICIOS S.A", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ADOLFO DOMINGUEZ, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "AEDAS HOMES, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "AENA, S.M.E., S.A.", "to": "Consumer Services", "width": 1}, {"from": "AIRBUS SE", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "AIRTIFICIAL INTELLIGENCE STRUCTURES S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ALANTRA PARTNERS, S.A.", "to": "Financial Services", "width": 1}, {"from": "ALMIRALL, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "AMADEUS IT GROUP, S.A.", "to": "Technology and Telecommunications", "width": 1}, {"from": "AMPER, S.A.", "to": "Technology and Telecommunications", "width": 1}, {"from": "AMREST HOLDINGS, S.E.", "to": "Consumer Services", "width": 1}, {"from": "APERAM, SOCIETE ANONYME", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "APPLUS SERVICES, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ARCELORMITTAL, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "\u00c1RIMA REAL ESTATE SOCIMI, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "ATRESMEDIA CORP. DE MEDIOS DE COM. S.A.", "to": "Consumer Services", "width": 1}, {"from": "ATRYS HEALTH, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "AUDAX RENOVABLES, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "AZKOYEN S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "BANCO BILBAO VIZCAYA ARGENTARIA, S.A.", "to": "Financial Services", "width": 1}, {"from": "BANCO DE SABADELL, S.A.", "to": "Financial Services", "width": 1}, {"from": "BANCO SANTANDER, S.A.", "to": "Financial Services", "width": 1}, {"from": "BANKINTER,S.A.", "to": "Financial Services", "width": 1}, {"from": "BERKELEY ENERGIA LIMITED", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "BODEGAS RIOJANAS, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "BORGES AGRICULTURAL \u0026 INDUST. NUTS, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "CAIXABANK, S.A.", "to": "Financial Services", "width": 1}, {"from": "CAJA DE AHORROS DEL MEDITERRANEO", "to": "Financial Services", "width": 1}, {"from": "CASH, S.A.", "to": "Consumer Services", "width": 1}, {"from": "CELLNEX TELECOM, S.A.", "to": "Technology and Telecommunications", "width": 1}, {"from": "CIA. DE DIST. INTEG. LOGISTA HOLDINGS", "to": "Consumer Services", "width": 1}, {"from": "CIA. ESPA\u00d1OLA  VIVIENDAS EN ALQUILER,S.A", "to": "Real Estate Services", "width": 1}, {"from": "CIA.LEVANTINA, EDIFICACION DE O.PUBLICAS", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "CIE AUTOMOTIVE, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "CLINICA BAVIERA, S.A.", "to": "Consumer Services", "width": 1}, {"from": "COCA-COLA EUROPACIFIC PARTNERS PLC", "to": "Consumer Goods", "width": 1}, {"from": "CONSTRUCC. Y AUX. DE FERROCARRILES, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "CORP.  ACCIONA ENERG\u00cdAS RENOVABLES, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "CORPORACION FINANCIERA ALBA, S.A.", "to": "Financial Services", "width": 1}, {"from": "DEOLEO, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "DESA", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "DIA-DISTRIBUIDORA INT. DE ALIMENT. S.A.", "to": "Consumer Services", "width": 1}, {"from": "DURO FELGUERA, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "EBRO FOODS, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "ECOENER, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "EDREAMS ODIGEO, S.A.", "to": "Consumer Services", "width": 1}, {"from": "ELECNOR S. A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "ENAGAS, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "ENCE ENERGIA Y CELULOSA, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "ENDESA, SOCIEDAD ANONIMA", "to": "Petrol and Power", "width": 1}, {"from": "ERCROS S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "FAES FARMA, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "FERROVIAL S.E.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "FLUIDRA, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "FOMENTO DE CONSTR. Y CONTRATAS S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "GENERAL DE ALQUILER DE MAQUINARIA, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "GESTAMP AUTOMOCION, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "GLOBAL DOMINION ACCESS, S.A.", "to": "Technology and Telecommunications", "width": 1}, {"from": "GRENERGY RENOVABLES, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "GRIFOLS, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "GRUPO CATALANA OCCIDENTE, S.A.", "to": "Financial Services", "width": 1}, {"from": "GRUPO EMPRESARIAL SAN JOSE, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "GRUPO EZENTIS, S.A.", "to": "Technology and Telecommunications", "width": 1}, {"from": "IBERDROLA, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "IBERPAPEL GESTION, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "INDRA SISTEMAS, S.A., SERIE A", "to": "Technology and Telecommunications", "width": 1}, {"from": "INDUSTRIA DE DISE\u00d1O TEXTIL, SA \"INDITEX\"", "to": "Consumer Goods", "width": 1}, {"from": "INMOBILIARIA COLONIAL SOCIMI, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "INMOBILIARIA DEL SUR, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "INNOVATIVE SOLUTIONS ECOSYSTEM, S.A.", "to": "Consumer Services", "width": 1}, {"from": "INTERNATIONAL CONSOLIDAT. AIRLINES GROUP", "to": "Consumer Services", "width": 1}, {"from": "LABORATORIO REIG JOFRE, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "LABORATORIOS FARMACEUTICOS ROVI, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "LAR ESPA\u00d1A REAL ESTATE, SOCIMI, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "LIBERTAS 7, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "LINEA DIRECTA ASEGURADORA, S.A.", "to": "Financial Services", "width": 1}, {"from": "LINGOTES ESPECIALES, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "MAPFRE, S.A.", "to": "Financial Services", "width": 1}, {"from": "MELIA HOTELS INTERNATIONAL, S.A.", "to": "Consumer Services", "width": 1}, {"from": "MERLIN PROPERTIES, SOCIMI, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "METROVACESA, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "MFE-MEDIAFOREUROPE N.V.", "to": "Consumer Services", "width": 1}, {"from": "MIQUEL Y COSTAS \u0026 MIQUEL, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "MONTEBALITO, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "NATURGY ENERGY GROUP, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "NATURHOUSE HEALTH, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "NEINOR HOMES, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "NH HOTEL GROUP, S.A.", "to": "Consumer Services", "width": 1}, {"from": "NICOLAS CORREA S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "NUEVA EXPRESION TEXTIL, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "NYESA VALORES CORPORACION, S.A.", "to": "Real Estate Services", "width": 1}, {"from": "OBRASCON HUARTE LAIN, S.A.", "to": "Basic Mat., Industry and Construction", "width": 1}, {"from": "OPDENERGY HOLDING, S.A.", "to": "Petrol and Power", "width": 1}, {"from": "ORYZON GENOMICS, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "PESCANOVA, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "PHARMA MAR, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "PRIM, S.A.", "to": "Consumer Goods", "width": 1}, {"from": "PROMOTORA DE INFORMACIONES,S.A.", "to": "Consumer Services", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": true
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": true,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
